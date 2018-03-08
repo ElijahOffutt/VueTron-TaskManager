@@ -1,0 +1,72 @@
+// IMPORT ALL BASE CODE
+@import 'imports/imports';
+
+// IMPORT ALL PAGE STYLES
+//@import 'imports/imports';
+// IMPORT ALL ZONE STYLES
+//@import 'imports/imports';
+// IMPORT COMPONENT STYLES
+//@import 'imports/imports';
+style,
+script,
+meta,
+head {
+    @extend .no;
+}
+
+.wrap {
+    @extend .fill,
+    .con;
+}
+
+html {
+
+    @extend .full,
+    .reset,
+    .con;
+    overflow: hidden;
+
+    > body {
+
+        @extend .full,
+        .reset,
+        .con;
+        overflow: hidden;
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track-piece {
+            background-color: mix(black, white, 5%);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: mix(black, white, 10%);
+        }
+
+        > .wrap {
+
+            @extend .reset,
+            .con,
+            .full;
+            background-color: black;
+
+            > div {
+                @extend .ab;
+                background-color: white;
+            }
+
+            @import 'pages/front/front';
+
+            @import 'pages/lists/lists';
+
+            @import 'pages/tasks/tasks';
+
+            @import 'pages/modals/modals';
+
+        }
+
+    }
+
+}

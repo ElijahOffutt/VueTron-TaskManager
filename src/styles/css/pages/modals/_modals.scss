@@ -1,0 +1,349 @@
+> .modals {
+
+    @extend .full;
+    background-color: rgba(0, 0, 0, .5);
+    z-index: -100;
+    opacity: 0;
+    transition: z-index 0.5s step-end, opacity .2s linear;
+
+    > .wrap {
+
+        @extend .con,
+        .fill;
+
+        > .backPad {
+
+            @extend .ab,
+            .fill;
+            z-index: -1;
+
+        }
+
+        @keyframes shake {
+
+            0% {
+                transform: translate(-50%, -50%);
+            }
+            20% {
+                transform: translate(-55%, -50%);
+            }
+            40% {
+                transform: translate(-47%, -50%);
+            }
+            60% {
+                transform: translate(-51%, -50%);
+            }
+            80% {
+                transform: translate(-49%, -50%);
+            }
+            100% {
+                transform: translate(-50%, -50%);
+            }
+
+        }
+
+        > .content {
+
+            @extend .abCenter;
+            width: calc(100vw - 60px);
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, .5);
+            background-color: white;
+            border-radius: 3px;
+            opacity: 0;
+
+            > .wrap {
+
+                @extend .con;
+
+                > .addList,
+                > .restart,
+                > .remove {
+
+                    display: none;
+
+                }
+
+                > .addList {
+
+                    > h6 {
+
+                        @include bar(80px);
+                        width: 100%;
+                        text-align: center;
+                        @include font(open sans, 500, 1.15em);
+
+                    }
+
+                    > .text {
+
+                        margin: 0 0 15px 25px;
+                        border-bottom: solid 1px $light-background;
+                        @extend .con;
+                        @include bar(40px);
+                        width: calc(100% - 50px);
+
+                        > * {
+                            background-color: transparent;
+                            @extend .ab;
+                            cursor: pointer;
+                        }
+
+                        > input {
+
+                            border: none;
+                            width: 100%;
+                            z-index: -1;
+                            cursor: text;
+                            @include font(open sans, 500, 1em);
+                            color: mix(black, white, 50%);
+
+                            &:focus {
+
+                                outline: none !important;
+
+                            }
+
+                            &::placeholder {
+
+                                color: red;
+                                @include font(open sans, 500, 1em);
+                                color: transparent;
+
+                            }
+
+                        }
+
+                        > label {
+
+                            z-index: 1;
+                            width: 100%;
+                            @include font(open sans, 500, .9em);
+                            transform: translate(-17%, -55%) scale(.65);
+                            color: $light-background;
+                            opacity: .75;
+                            cursor: text;
+
+                        }
+
+                        > .line {
+
+                            content: "";
+                            @extend .ab;
+                            @include hw(1px, 100%);
+                            background-color: mix(black, white, 50%);
+                            top: 100%;
+                            left: 50%;
+                            transform: translate(-50%, 0%);
+                            z-index: 10;
+
+                        }
+
+                        > input:placeholder-shown ~ label {
+
+                            transform: translate(0%, 0%) scale(1);
+
+                        }
+
+                        > input:placeholder-shown ~ .line,
+                            {
+
+                            width: 0%;
+
+                        }
+
+                        > label:hover ~ .line {
+                            width: 100%;
+                        }
+
+                    }
+
+                    > .types {
+
+                        width: calc(100% - 60px);
+                        @extend .flex;
+                        margin: 30px 30px 30px;
+                        justify-content: space-between;
+
+                        > li {
+
+                            @include bar(40px);
+                            border: solid 1px $light-background;
+                            width: 31%;
+                            cursor: pointer;
+                            text-align: center;
+                            border-radius: 4px;
+                            @include font(source sans pro, 500, .6em);
+                            text-transform: uppercase;
+                            color: $light-background;
+                            transform: scale(.95);
+
+                            &:hover {
+
+                                background-color: $light-background;
+                                color: white;
+
+                            }
+
+                        }
+
+                        > .current {
+
+                            background-color: $light-background;
+                            color: white;
+                            transform: scale(1.05);
+
+                        }
+
+
+                    }
+
+                    > .add {
+
+                        width: calc(100% - 50px);
+                        margin: 25px;
+                        border-radius: 4px;
+                        text-align: center;
+                        @include bar(40px);
+                        background-color: #2ecc71;
+                        color: white;
+                        @include font(open sans, 700, .8em);
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        cursor: pointer;
+
+                        &:hover {
+
+                            transform: scale(1.05);
+
+                        }
+
+                    }
+
+
+
+                }
+
+                > .remove,
+                > .restart {
+
+                    > p {
+
+                        @include font(open sans, 400, 1.25em);
+                        margin: 30px 30px 20px;
+                        text-align: center;
+
+                        > span {
+
+                            display: inline-block;
+
+                        }
+
+                    }
+
+                    > .ask {
+
+                        @extend .flex;
+                        justify-content: space-between;
+                        margin: 0 30px 30px;
+
+                        > span {
+
+                            width: 46.5%;
+                            background-color: transparent;
+                            display: inline-block;
+                            text-align: center;
+                            @include bar(40px);
+                            border: solid 2px;
+                            border-radius: 100px;
+                            cursor: pointer;
+                            text-transform: uppercase;
+                            @include font(source sans pro, 600, .9em);
+
+                        }
+
+                        > span:first-child {
+                            border-color: #2ecc71;
+                            color: #2ecc71;
+                            &:hover {
+                                background-color: #2ecc71;
+                                color: white;
+                            }
+                        }
+
+                        > span:last-child {
+                            border-color: #e74c3c;
+                            color: #e74c3c;
+                            &:hover {
+                                background-color: #e74c3c;
+                                color: white;
+                            }
+                        }
+
+                    }
+
+                }
+
+                > .remove {
+                    > p {
+                        > span {
+                            color: #e74c3c;
+                        }
+                    }
+                }
+
+                > .restart {
+                    > p {
+                        > span {
+                            color: #3498db;
+                        }
+                    }
+                }
+
+                > .show {
+
+                    display: block;
+
+                }
+
+            }
+
+        }
+
+        > .shake {
+
+            animation: shake 1s ease 0s 1 forwards;
+
+        }
+
+    }
+
+}
+
+.modals.show {
+
+    z-index: 100;
+    opacity: 1;
+    transition: z-index 0.5s step-start, opacity .2s linear;
+
+    > .wrap {
+
+        > .content {
+
+            transition: transform .55s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0s;
+            transform: translate(-50%, -50%);
+            opacity: 1;
+
+            > .wrap {}
+
+        }
+
+    }
+
+}
+
+.modals.show ~ .show {
+
+    filter: blur(1.5px);
+
+}

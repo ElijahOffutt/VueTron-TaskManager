@@ -1,0 +1,341 @@
+> .tasks {
+
+    @extend .ab,
+    .full;
+    z-index: 2;
+
+    > .wrap {
+
+        overflow: hidden;
+        @extend .con,
+        .full;
+
+        > * {
+            width: 100%;
+            @extend .ab;
+        }
+
+        > .newTask {
+
+            height: 40px;
+            width: 100%;
+            border-bottom: solid 1px $light-background;
+
+            > * {
+                float: left;
+                cursor: pointer;
+            }
+
+            > .back {
+
+                @include sq(40px);
+                viewBox: 0 0 40 40;
+
+                > polyline {
+                    stroke-width: 3;
+                }
+
+                > .blue {
+
+                    stroke: #3498db;
+                    stroke-dasharray: 30;
+                    stroke-dashoffset: 30;
+
+                }
+
+                > .grey {
+                    stroke: $light-background;
+                }
+
+                &:hover {
+
+                    > .blue {
+                        stroke-dashoffset: 0;
+                    }
+
+                }
+
+            }
+
+            > input {
+
+                @include bar(40px);
+                border: none;
+                border-right: solid 1px $light-background;
+                border-left: solid 1px $light-background;
+                box-sizing: border-box;
+                background-color: transparent;
+                width: calc(100vw - 80px);
+                text-indent: 13px;
+
+                &:focus {
+                    outline: none !important;
+                }
+
+                &:hover {
+                    text-align: 20px;
+                }
+
+                &::placeholder {
+
+                    color: rgba(0, 0, 0, .25);
+
+                }
+
+            }
+
+            > .add {
+
+                @include sq(40px);
+                viewBox: 0 0 40 40;
+
+                > polyline {
+                    stroke-width: 3;
+                }
+
+                > .green {
+
+                    stroke: #2ecc71;
+                    stroke-dasharray: 30;
+                    stroke-dashoffset: 30;
+
+                }
+
+                > .green:last-child {
+                    transition-delay: .1s;
+                }
+
+                > .grey {
+                    stroke: $light-background;
+                }
+
+            }
+
+            > input:not(:placeholder-shown) + .add {
+
+                > .green {
+                    stroke-dashoffset: 0;
+                }
+
+            }
+
+        }
+
+        > .taskLists {
+
+            @include hw(calc(100vh - 80px), 100vw);
+            top: 40px;
+
+            > ul {
+
+                @extend .con,
+                .fill;
+                overflow-x: hidden;
+                overflow-y: scroll;
+
+                > li {
+
+                    @extend .con;
+                    width: 100%;
+                    height: 40px;
+                    border-bottom: solid 1px $light-background;
+                    cursor: pointer;
+                    transition: all .3s ease;
+
+                    > * {
+                        @extend .ab;
+                        line-height: 40px;
+                        height: 40px;
+                    }
+
+                    > .check {
+
+                        height: 40px;
+                        width: 40px;
+                        viewBox: 0 0 40 40;
+                        left: 5px;
+
+                        > .checkBox {
+
+                            height: 15px;
+                            width: 15px;
+                            rx: 2.5px;
+                            ry: 2.5px;
+                            x: 11.5;
+                            y: 11.5;
+                            stroke: mix(black, white, 10%);
+                            stroke-width: 3;
+                            fill: transparent;
+
+                        }
+
+                        > polyline {
+
+                            fill: transparent;
+                            stroke-dasharray: 30;
+                            stroke-dashoffset: 30;
+                            transition: all .1s ease-in-out;
+
+                        }
+
+                        > .greenCheck {
+                            stroke: #2ecc71;
+                            stroke-width: 3;
+                        }
+
+                        > .whiteCheck {
+                            stroke: white;
+                            stroke-width: 8;
+                        }
+
+                    }
+
+                    > .text {
+
+                        @include font(source sans pro, 500, .9em);
+                        color: rgba(0, 0, 0, .75);
+                        left: 45px;
+                        width: calc(100vw - 85px);
+
+                    }
+
+                    > .delete {
+
+                        @include sq(40px);
+                        left: calc(100vw - 43px);
+                        viewBox: 0 0 40 40;
+
+                        > * {
+                            stroke-width: 4;
+                        }
+
+                        > .grey {
+                            stroke: $light-background;
+                        }
+
+                        > .red {
+                            stroke: #e74c3c;
+                            stroke-dasharray: 20;
+                            stroke-dashoffset: 20;
+                        }
+
+                        > .red:last-child {
+                            transition-delay: .1s;
+                        }
+
+                        &:hover {
+
+                            transform: scale(1.2);
+
+                            > .red {
+                                stroke-dashoffset: 0;
+                            }
+
+                        }
+
+                    }
+
+                    > .line {
+
+                        left: 45px;
+                        top: 20px;
+                        transform: translateY(-50%);
+                        @include hw(1px, 0%);
+                        background-color: mix(black, white, 20%);
+
+                    }
+
+                    &:hover {
+
+                        > .text {
+                            transform: translateX(5px);
+                        }
+
+
+                    }
+
+                }
+
+                > .checked {
+
+                    > svg {
+
+                        > polyline {
+                            stroke-dashoffset: 0;
+                        }
+
+                    }
+
+                    > .text {
+                        color: rgba(0, 0, 0, .3);
+                    }
+
+                    > .line {
+                        width: calc(100vw - 90px);
+                    }
+
+                }
+
+            }
+
+        }
+
+        > .transports {
+
+            @include bar(40px);
+            @extend .ab;
+            top: 100%;
+            transform: translateY(-100%);
+            border-top: 1px solid $light-background;
+            z-index: 10;
+
+            > * {
+
+                text-align: center;
+                @extend .con;
+                float: left;
+                width: calc(50% - .5px);
+                @include font(source sans pro, 500, .9em);
+                text-transform: capitalize;
+                cursor: pointer;
+
+            }
+
+            .restart {
+
+                border-right: 1px solid $light-background;
+                color: #3498db;
+
+                &:hover {
+
+                    background-color: #3498db;
+                    color: white;
+
+                }
+
+            }
+
+            .remove {
+
+                color: #e74c3c;
+
+                &:hover {
+
+                    background-color: #e74c3c;
+                    color: white;
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+
+> .tasks.show ~ .lists.show {
+
+    transform: translate(-150%, -50%); //opacity: 0;
+}

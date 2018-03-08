@@ -1,0 +1,276 @@
+.front {
+
+    @extend .full;
+    z-index: 3;
+    background-color: white;
+    transition: z-index 2s step-end, background-color 0s linear;
+    will-change: opacity, background-color;
+    
+    > .wrap {
+
+        @extend .flex,
+        .fill;
+        transform: scale(1);
+        transition-timing-function: ease-out;
+        filter: blur(0px);
+        background-color: white;
+        opacity: 1;
+        transition: all 2s ease 0s;
+
+        @keyframes in {
+
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0px);
+            }
+
+        }
+
+        @keyframes lineFill {
+
+            0% {
+                stroke-dashoffset: 200;
+                stroke-width: 1px;
+            }
+            90% {
+                stroke-dashoffset: 0;
+                stroke-width: 1px;
+            }
+            100% {
+                stroke-dashoffset: 0;
+                stroke-width: 0px;
+            }
+
+        }
+
+        @keyframes colors {
+
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+
+        }
+
+        @keyframes logos {
+
+            0% {
+                transform: translateY(100px) scale(1.5);
+            }
+            75% {
+                transform: translateY(100px) scale(1);
+            }
+            100% {
+                transform: translateY(0px) scale(1);
+            }
+
+        }
+
+        @keyframes butt {
+
+            0% {
+                transform: scale(.75);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+        }
+
+        h2,
+        p,
+        .gotoLists {
+            will-change: transform opacity;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: in .75s 1 forwards cubic-bezier(.75, -0.5, 0, 1.75);
+            will-change: transform, opacity;
+        }
+
+        .VuePlusElectron {
+
+            width: 100%;
+            height: 100px;
+            transform: translateY(100px) scale(1.5);
+            animation: logos 2.5s forwards;
+            animation-timing-function: cubic-bezier(.75, -0.5, 0, 1.75);
+            will-change: opacity, transform;
+
+            > #lines {
+
+                * {
+
+                    transition: stroke-dashoffset 1s 1s ease-in-out;
+                    fill: transparent;
+                    stroke: mix(black, white, 10%);
+                    stroke-width: 1px;
+                    stroke-dasharray: 200;
+                    stroke-dashoffset: 200;
+                    stroke-linecap: round;
+                    animation: lineFill 2s .5s ease-out forwards;
+                    will-change: transform, opacity, stroke-dashoffset, fill;
+
+                }
+
+                #l-vue {
+
+                    .st0:nth-child(4),
+                    .st0:nth-child(3) {
+
+                        animation-delay: .5s;
+
+                    }
+
+                    .st0:nth-child(2),
+                    .st0:nth-child(1) {
+
+                        animation-delay: .7s;
+
+                    }
+
+                }
+
+                #l-plus {
+
+                    animation-duration: s;
+
+                }
+
+            }
+
+            > #color {
+
+                opacity: 0;
+                animation: colors 1s ease-out 2s forwards;
+
+                .st0 {
+                    fill: #488590;
+                }
+                .st1 {
+                    fill: #38495E;
+                }
+                .st2 {
+                    fill: #43B783;
+                }
+                .st3 {
+                    fill: #999;
+                } //.st4{fill:none;}
+            }
+
+        }
+
+        h2 {
+
+            width: 100%;
+            text-align: center;
+            @extend .reset;
+            @include font(open sans, 100, 3.5em);
+            margin-top: 10px;
+            animation-delay: 2.3s;
+            color: mix(black, white, 50%);
+            will-change: opacity, transform;
+
+        }
+
+        p {
+
+            display: inline-block;
+            width: 100%;
+            padding: 5px 30px 30px 30px;
+            text-align: center;
+            @include font(source sans pro, 500, 1.25em);
+            color: mix(black, white, 30%);
+            animation-delay: 2.5s;
+            will-change: opacity, transform;
+
+            span {
+
+                display: inline-block;
+                color: $dark-main-color;
+
+            }
+
+        }
+
+        .gotoLists {
+
+            animation-delay: 2.7s;
+            padding: 10px 15px;
+            color: white;
+            border-radius: 12px;
+            background-color: $dark-main-color;
+            text-transform: uppercase;
+            @include font(source sans pro, 600, 1em);
+            margin-top: 20px;
+            will-change: opacity, transform;
+
+            &:hover {
+
+                background-color: $main-color;
+                cursor: pointer;
+
+            }
+
+        }
+
+        .GetStarted {
+
+            margin-top: 10px;
+            cursor: pointer;
+            transform: scale(.75s);
+            opacity: 0;
+            animation: butt .75s 1 forwards cubic-bezier(.75, -0.5, 0, 1.75) 2.9s; 
+            will-change: opacity, transform;
+            
+            > defs {
+
+                > #theme {
+
+                    > .c1 {
+                        stop-color: $vue-color1-hex;
+                    }
+                    > .c2 {
+                        stop-color: $vue-color2-hex;
+                    }
+                    > .c3 {
+                        stop-color: $electron-color-hex;
+                    }
+
+                }
+
+            }
+
+            &:hover {
+
+                > defs {
+
+                    > #theme {
+
+                        > .c1 {
+                            stop-color: $electron-color-hex;
+                        }
+                        > .c2 {
+                            stop-color: $vue-color1-hex;
+                        }
+                        > .c3 {
+                            stop-color: $vue-color2-hex;
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+}

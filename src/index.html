@@ -1,0 +1,348 @@
+<!doctype html>
+
+<html class="no-js" lang="en">
+
+
+<head>
+
+    <!--|| META DATA ||-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>VueTron Task Manager</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles/css/main.css">
+    <!--|| META DATA ||-->
+
+    <!--|| VUE JS LINKS ||-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!--|| VUE JS LINKS ||-->
+
+
+</head>
+
+<body>
+    <div id="app" class="wrap">
+
+        <!-- MODALS VIEW -->
+        <div :class="['modals', {show: states.modals.show}]">
+            <div class="wrap">
+
+                <!--  -->
+                <div class="backPad" @click="modals"></div>
+
+                <div :class="['content', {shake: states.modals.addError}]">
+                    <div class="wrap">
+
+                        <div :class="['addList', {show: states.modals.addList}]">
+
+                            <h6>Add New List</h6>
+
+                            <div class="text">
+                                <input @keyup.enter="listFuncs('addList')" v-model="newList.list.name" type="text" id="listname" placeholder="List name">
+                                <label for="listname">Title</label>
+                                <div class="line"></div>
+                            </div>
+
+                            <div class="text">
+                                <input @keyup.enter="listFuncs('addList')" v-model="newList.list.desc" type="text" id="description" placeholder="Description">
+                                <label for="description">Description</label>
+                                <div class="line"></div>
+                            </div>
+
+                            <ul class="types">
+                                <li v-for="(type, i) in newList.types" :class="{current : type.current}" @click="listFuncs('type', i)">{{ type.name }}</li>
+                            </ul>
+
+                            <span class="add" @click="listFuncs('addList')">add list</span>
+
+                        </div>
+
+                        <div :class="['restart', {show: states.modals.restart}]">
+
+                            <p>Are you sure you Want to <span>Restart</span> this list?</p>
+
+                            <div class="ask">
+                                <span @click="modals(), taskFuncs('restart')">Yes</span>
+                                <span @click="modals">Cancel</span>
+                            </div>
+
+                        </div>
+
+                        <div :class="['remove', {show: states.modals.remove}]">
+
+                            <p>Are you sure you Want to <span>Remove</span> this list?</p>
+
+                            <div class="ask">
+                                <span @click="taskFuncs('remove')">Yes</span>
+                                <span @click="modals">Cancel</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!--  -->
+        <div :class="['tasks', {show: states.tasks}]">
+            <div class="wrap">
+
+                <div class="newTask">
+
+                    <svg class="back" @click="viewFuncs('backToLists')">
+            
+                <polyline class="grey" points="15,21 25,11" />
+                <polyline class="grey" points="15,19 25,29" />
+                <polyline class="blue" points="15,21 25,11" />
+                <polyline class="blue" points="15,19 25,29" />
+            
+            </svg>
+
+                    <input type="text" v-model="newTask" @keyup.enter="taskFuncs('add')" placeholder="New Task">
+
+                    <svg class="add" @click="taskFuncs('add')">
+                
+                <polyline class="grey" points="13,20 27,20" />
+                <polyline class="grey" points="20,13 20,27" />
+                <polyline class="green" points="13,20 27,20" />
+                <polyline class="green" points="20,13 20,27" />
+                
+            </svg>
+
+                </div>
+
+                <div class="taskLists">
+                    <ul>
+
+                        <li v-for="(task, i) in tasks" :class="{checked: task.checked}">
+
+                            <svg class="check" @click="taskFuncs('check', i)">
+                  <rect class="checkBox"/>
+                  <polyline class="whiteCheck" points="12,15 19,22 28,7" />
+                  <polyline class="greenCheck" points="12,15 19,22 28,7" />
+                </svg>
+
+                            <span class="text" @click="taskFuncs('check', i)">{{ task.content }}</span>
+
+                            <svg class="delete" @click="taskFuncs('delete', i)">
+                    <line class="grey" x1="15" y1="15" x2="25" y2="25" />
+                    <line class="grey" x1="15" y1="25" x2="25" y2="15" />
+                    <line class="red" x1="15" y1="15" x2="25" y2="25" />
+                    <line class="red" x1="15" y1="25" x2="25" y2="15" />
+                </svg>
+
+                            <div class="line"></div>
+
+                        </li>
+
+                    </ul>
+                </div>
+
+                <div class="transports">
+                    <span class="restart" @click="modals('restart')">restart</span>
+                    <span class="remove" @click="modals('remove')">remove</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!--  -->
+        <div :class="['lists', {show: states.lists}]">
+            <div class="wrap">
+
+                <div class="heading" :style="{backgroundImage: headerImage }">
+                    <div class="wrap">
+
+                        <span v-if="weather" class="weather">{{weather.temp}}&deg; P{{weather.pressure}} H{{weather.humidity}}%</span>
+
+                        <span @click="listFunctions('showZip')" v-else class="weather">Loading Weather</span>
+
+                        <h1>Your Task Lists</h1>
+
+                        <div class="date">{{ date }}</div>
+
+                    </div>
+                </div>
+
+                <ul class="content">
+
+                    <svg class="typeMasks">
+               <defs>
+                   <mask id="personal">
+                       <path d="M44.5,43.3a3.9,3.9,0,0,0-1.2-2.8,3.5,3.5,0,0,0-1.2-.8l-3.4-3.2L48.2,27l-4.7-4.7-9.8,9.8c-7-6.1-10.9-8.8-11.7-8s1.9,4.8,8,11.7L23,42.7h0v4.7h4.7l6.6-6.6,3.2,3.4a3.5,3.5,0,0,0,.8,1.2,7.6,7.6,0,0,0,8.3,1.7l1.1-.4-1-.5C44.6,45.2,44.6,44.3,44.5,43.3ZM38,35.9l-1.4-1.3,6.7-6.7,1.3,1.3Zm5.5-12.2L46.8,27l-1.5,1.5-3.4-3.4Zm-2.2,2.2,1.3,1.3L35.8,34l-1.4-1.3ZM26.8,46.5H25.1V45.4H24V43.7h2.8Zm.3-3.8H24.4l6.1-6.1L31.8,38Zm.7,3.4V43.4l4.7-4.7,1.3,1.4Zm9.6-3.5-2.2-2.5h0l-.7-.7h0L33.2,38h0l-.6-.7h0l-1.2-1.4h0l-.6-.7h0c-4.2-4.9-7.5-9-7.9-10.2,1.9.6,10.1,7.5,17.7,14.6a3.5,3.5,0,0,0-3.1,3.1ZM39,44.8a2.6,2.6,0,1,1,3.6-3.6,2.9,2.9,0,0,1,.9,2.2,3.7,3.7,0,0,0,1.8,3.2A6.6,6.6,0,0,1,39,44.8Z" fill="#fff" transform="translate(-10 -10)"/>
+                   </mask>
+                   <mask id="business">
+                       <path d="M37.9,22.3l1.5-5.2H30.6l1.5,5.2L27.6,44.2v.3L35,54.3l7.5-9.9Zm2.4,17.3-8.5,8.5-2-2.6,9.7-9.7ZM36.9,21.7H35.7l-3.5-3.5h2.2l2.7,2.7Zm-2.8,0h-1l-.4-1.4Zm2.7,1.1v.7l-5,5,1.2-5.7Zm-5.3,7.7,5.7-5.7.8,3.8-7.7,7.7,1.2-5.8Zm5.9-10.9L36,18.3h1.8ZM29.9,38.4,38.3,30l.9,4.5L29.1,44.6l-.4-.5Zm2.5,10.7L40.6,41l.7,3.2L35,52.4Z" transform="translate(-6 -6) scale(.9)" fill="#fff"/>
+                   </mask>
+                   <mask id="fitness">
+                       <path d="M50.5,31H47.7V27.8h-3V25.6H40.5v6.8h-11V25.6H25.3v2.2h-3V31H19.5V39h2.8v3.2h3v2.2h4.1V37.7h11v6.7h4.1V42.2h3V39h2.8ZM20.6,37.8V32.2h1.7v5.7Zm2.8,3.2V28.9h1.9V41.1Zm5,2.2H26.5V26.7h1.9V43.3Zm1.1-6.7v-3h11v3Zm14.1,6.7H41.6V26.7h1.9V43.3Zm3-2.2H44.7V28.9h1.9V41.1Zm2.8-3.2H47.7V32.2h1.7Z" transform="translate(-6 -6) scale(.9)" fill="#fff"/>
+                   </mask>
+                   <mask id="completed">
+                       <polyline stroke="white" stroke-width="1" fill="white" 
+                       points="15,25 25,35 35,15 23,27 15,25" />
+                   </mask>
+               </defs>
+           </svg>
+
+                    <li v-for="(list, i) in lists" @click="viewFuncs('tasks', i)">
+
+                        <svg>
+                    <rect v-if="list.completed" :mask="'url(#completed)'" />
+                    <rect v-else :mask="'url(#'+ list.type +')'" />
+                   <circle class="bass" />
+                   <circle class="round" :stroke-dashoffset="((list.percentage/lists[i].list.length)*100)*1.508" />
+               </svg>
+
+                        <h6>{{ list.name }}</h6>
+
+                        <span class="desc">{{ list.desc }}</span>
+
+                        <span class="date">{{ list.createdOn }}</span>
+                    </li>
+
+
+                </ul>
+
+                <svg class="newList" @click="modals('addList')">
+            <circle class="bg" />
+            <circle class="ring" />
+            <polyline points="20,25 30,25" />
+            <polyline points="25,20 25,30" />
+        </svg>
+
+            </div>
+        </div>
+
+        <!--  -->
+        <div class="front">
+            <div class="wrap">
+
+                <svg class="VuePlusElectron" viewBox="0 0 200 100">
+            <g id="color">
+                <g id="c-electron">
+                    <path class="st0" d="M140.7,30.4c-9-1.6-16.1,0.1-18.9,5c-2.1,3.7-1.5,8.5,1.5,13.7c0.3,0.4,0.8,0.6,1.3,0.3
+                        c0.4-0.3,0.6-0.8,0.3-1.3c-2.7-4.7-3.2-8.8-1.5-11.8c2.3-4.1,8.7-5.6,17-4.1c0.5,0.1,1-0.2,1.1-0.7
+                        C141.5,31,141.2,30.5,140.7,30.4L140.7,30.4L140.7,30.4z M127.9,55.4c3.6,4,8.3,7.7,13.7,10.8c13,7.5,26.9,9.5,33.7,4.9
+                        c0.4-0.3,0.5-0.9,0.2-1.3c-0.3-0.4-0.9-0.5-1.3-0.2c-6.1,4.2-19.3,2.3-31.7-4.9c-5.2-3-9.8-6.6-13.3-10.5
+                        c-0.3-0.4-0.9-0.4-1.3-0.1C127.6,54.4,127.6,55,127.9,55.4L127.9,55.4L127.9,55.4z"/>
+                    <path class="st0" d="M173.2,54.3c5.9-6.9,7.9-13.9,5.1-18.8c-2.1-3.6-6.5-5.5-12.3-5.6c-0.5,0-0.9,0.4-0.9,0.9s0.4,0.9,0.9,0.9
+                        c5.2,0.1,9,1.7,10.7,4.7c2.3,4.1,0.5,10.3-4.9,16.7c-0.3,0.4-0.3,1,0.1,1.3C172.2,54.7,172.8,54.6,173.2,54.3L173.2,54.3
+                        L173.2,54.3z M158.1,30.7c-5.3,1.1-11,3.4-16.4,6.5c-13.4,7.8-22.2,19.2-21,27.5c0.1,0.5,0.5,0.9,1,0.8c0.5-0.1,0.9-0.5,0.8-1
+                        c-1.1-7.4,7.2-18.2,20.1-25.6c5.3-3,10.7-5.2,15.9-6.3c0.5-0.1,0.8-0.6,0.7-1.1C159,30.9,158.5,30.6,158.1,30.7L158.1,30.7
+                        L158.1,30.7z"/>
+                    <path class="st0" d="M136.3,70.5c3.1,8.6,8.1,13.9,13.7,13.9c4.1,0,7.9-2.8,10.9-7.8c0.3-0.4,0.1-1-0.3-1.3
+                        c-0.4-0.3-1-0.1-1.3,0.3c-2.7,4.4-6,6.9-9.3,6.9c-4.7,0-9.2-4.7-12-12.6c-0.2-0.5-0.7-0.7-1.2-0.6C136.4,69.5,136.1,70,136.3,70.5
+                        L136.3,70.5L136.3,70.5z M164.3,68.8c1.6-5.1,2.4-10.9,2.4-17.1c0-15.2-5.3-28.4-12.9-31.8c-0.5-0.2-1,0-1.2,0.5
+                        c-0.2,0.5,0,1,0.5,1.2c6.8,3,11.8,15.5,11.8,30.1c0,5.9-0.8,11.6-2.4,16.5c-0.2,0.5,0.1,1,0.6,1.2
+                        C163.7,69.6,164.2,69.3,164.3,68.8L164.3,68.8L164.3,68.8z"/>
+                    <path class="st0" d="M181.7,67.9c0-2.4-2-4.4-4.4-4.4c-2.4,0-4.4,2-4.4,4.4c0,2.4,2,4.4,4.4,4.4C179.7,72.3,181.7,70.3,181.7,67.9
+                        L181.7,67.9L181.7,67.9z M179.8,67.9c0,1.4-1.1,2.6-2.6,2.6c-1.4,0-2.6-1.1-2.6-2.6s1.1-2.6,2.6-2.6
+                        C178.7,65.3,179.8,66.5,179.8,67.9L179.8,67.9L179.8,67.9z"/>
+                    <path class="st0" d="M122.7,72.3c2.4,0,4.4-2,4.4-4.4c0-2.4-2-4.4-4.4-4.4c-2.4,0-4.4,2-4.4,4.4C118.3,70.3,120.3,72.3,122.7,72.3
+                        L122.7,72.3L122.7,72.3z M122.7,70.5c-1.4,0-2.6-1.1-2.6-2.6s1.1-2.6,2.6-2.6s2.6,1.1,2.6,2.6S124.1,70.5,122.7,70.5L122.7,70.5
+                        L122.7,70.5z"/>
+                    <path class="st0" d="M150,24.5c2.4,0,4.4-2,4.4-4.4s-2-4.4-4.4-4.4c-2.4,0-4.4,2-4.4,4.4S147.6,24.5,150,24.5L150,24.5L150,24.5z
+                         M150,22.6c-1.4,0-2.6-1.1-2.6-2.6s1.1-2.6,2.6-2.6c1.4,0,2.6,1.1,2.6,2.6S151.4,22.6,150,22.6L150,22.6L150,22.6z"/>
+                    <path class="st0" d="M150.7,54.9c-1.7,0.4-3.4-0.7-3.8-2.4c-0.4-1.7,0.7-3.4,2.4-3.8c1.7-0.4,3.4,0.7,3.8,2.4
+                        C153.5,52.8,152.4,54.5,150.7,54.9L150.7,54.9z"/>
+                </g>
+                <g id="c-vue">
+                    <path class="st1" d="M28.8,17.5L53,59.1l24-41.6H62.2l-9.2,16l-9.4-16H28.8z"/>
+                    <polygon class="st2" points="77,17.5 53,59.1 28.8,17.5 13,17.5 53,86.5 93,17.5 		"/>
+                </g>
+                <polygon id="c-plus" class="st3" points="105,48.5 101.5,48.5 101.5,45 98.5,45 98.5,48.5 95,48.5 95,51.5 98.5,51.5 98.5,55 
+                    101.5,55 101.5,51.5 105,51.5 	"/>
+            </g>
+            <g id="lines">
+                <g id="l-electron">
+                    <path class="st4" d="M140.7,30.4c-9-1.6-16.1,0.1-18.9,5c-2.1,3.7-1.5,8.5,1.5,13.7c0.3,0.4,0.8,0.6,1.3,0.3
+                        c0.4-0.3,0.6-0.8,0.3-1.3c-2.7-4.7-3.2-8.8-1.5-11.8c2.3-4.1,8.7-5.6,17-4.1c0.5,0.1,1-0.2,1.1-0.7
+                        C141.5,31,141.2,30.5,140.7,30.4L140.7,30.4L140.7,30.4z M127.9,55.4c3.6,4,8.3,7.7,13.7,10.8c13,7.5,26.9,9.5,33.7,4.9
+                        c0.4-0.3,0.5-0.9,0.2-1.3c-0.3-0.4-0.9-0.5-1.3-0.2c-6.1,4.2-19.3,2.3-31.7-4.9c-5.2-3-9.8-6.6-13.3-10.5
+                        c-0.3-0.4-0.9-0.4-1.3-0.1C127.6,54.4,127.6,55,127.9,55.4L127.9,55.4L127.9,55.4z"/>
+                    <path class="st4" d="M173.2,54.3c5.9-6.9,7.9-13.9,5.1-18.8c-2.1-3.6-6.5-5.5-12.3-5.6c-0.5,0-0.9,0.4-0.9,0.9s0.4,0.9,0.9,0.9
+                        c5.2,0.1,9,1.7,10.7,4.7c2.3,4.1,0.5,10.3-4.9,16.7c-0.3,0.4-0.3,1,0.1,1.3C172.2,54.7,172.8,54.6,173.2,54.3L173.2,54.3
+                        L173.2,54.3z M158.1,30.7c-5.3,1.1-11,3.4-16.4,6.5c-13.4,7.8-22.2,19.2-21,27.5c0.1,0.5,0.5,0.9,1,0.8c0.5-0.1,0.9-0.5,0.8-1
+                        c-1.1-7.4,7.2-18.2,20.1-25.6c5.3-3,10.7-5.2,15.9-6.3c0.5-0.1,0.8-0.6,0.7-1.1C159,30.9,158.5,30.6,158.1,30.7L158.1,30.7
+                        L158.1,30.7z"/>
+                    <path class="st4" d="M136.3,70.5c3.1,8.6,8.1,13.9,13.7,13.9c4.1,0,7.9-2.8,10.9-7.8c0.3-0.4,0.1-1-0.3-1.3
+                        c-0.4-0.3-1-0.1-1.3,0.3c-2.7,4.4-6,6.9-9.3,6.9c-4.7,0-9.2-4.7-12-12.6c-0.2-0.5-0.7-0.7-1.2-0.6C136.4,69.5,136.1,70,136.3,70.5
+                        L136.3,70.5L136.3,70.5z M164.3,68.8c1.6-5.1,2.4-10.9,2.4-17.1c0-15.2-5.3-28.4-12.9-31.8c-0.5-0.2-1,0-1.2,0.5
+                        c-0.2,0.5,0,1,0.5,1.2c6.8,3,11.8,15.5,11.8,30.1c0,5.9-0.8,11.6-2.4,16.5c-0.2,0.5,0.1,1,0.6,1.2
+                        C163.7,69.6,164.2,69.3,164.3,68.8L164.3,68.8L164.3,68.8z"/>
+                    <path class="st4" d="M181.7,67.9c0-2.4-2-4.4-4.4-4.4c-2.4,0-4.4,2-4.4,4.4c0,2.4,2,4.4,4.4,4.4C179.7,72.3,181.7,70.3,181.7,67.9
+                        L181.7,67.9L181.7,67.9z M179.8,67.9c0,1.4-1.1,2.6-2.6,2.6c-1.4,0-2.6-1.1-2.6-2.6s1.1-2.6,2.6-2.6
+                        C178.7,65.3,179.8,66.5,179.8,67.9L179.8,67.9L179.8,67.9z"/>
+                    <path class="st4" d="M122.7,72.3c2.4,0,4.4-2,4.4-4.4c0-2.4-2-4.4-4.4-4.4c-2.4,0-4.4,2-4.4,4.4C118.3,70.3,120.3,72.3,122.7,72.3
+                        L122.7,72.3L122.7,72.3z M122.7,70.5c-1.4,0-2.6-1.1-2.6-2.6s1.1-2.6,2.6-2.6s2.6,1.1,2.6,2.6S124.1,70.5,122.7,70.5L122.7,70.5
+                        L122.7,70.5z"/>
+                    <path class="st4" d="M150,24.5c2.4,0,4.4-2,4.4-4.4s-2-4.4-4.4-4.4c-2.4,0-4.4,2-4.4,4.4S147.6,24.5,150,24.5L150,24.5L150,24.5z
+                         M150,22.6c-1.4,0-2.6-1.1-2.6-2.6s1.1-2.6,2.6-2.6c1.4,0,2.6,1.1,2.6,2.6S151.4,22.6,150,22.6L150,22.6L150,22.6z"/>
+                    <path class="st4" d="M150.7,54.9c-1.7,0.4-3.4-0.7-3.8-2.4c-0.4-1.7,0.7-3.4,2.4-3.8c1.7-0.4,3.4,0.7,3.8,2.4
+                        C153.5,52.8,152.4,54.5,150.7,54.9L150.7,54.9z"/>
+                </g>
+                <g id="l-vue">
+                    <path class="st4" d="M53,33.6l-9.4-16H13"/>
+                    <path class="st4" d="M53,33.6l9.2-16H93"/>
+                    <line class="st4" x1="53" y1="59.2" x2="28.8" y2="17.6"/>
+                    <path class="st4" d="M53,59.2l24-41.6"/>
+                    <line class="st4" x1="53" y1="86.6" x2="93" y2="17.6"/>
+                    <path class="st4" d="M53,86.6l-40-69"/>
+                </g>
+                <polygon id="l-plus" class="st4" points="105,48.5 101.5,48.5 101.5,45 98.5,45 98.5,48.5 95,48.5 95,51.5 98.5,51.5 98.5,55 
+                    101.5,55 101.5,51.5 105,51.5 	"/>
+            </g>
+        </svg>
+
+                <h2>VueTron</h2>
+
+                <p><span>Task Manager Application</span> designed and developed by <span>Elijah Offutt</span> using VueJs, Electron and NeDB.</p>
+
+                <!--span @click="showLists" class="gotoLists">get started</span-->
+
+                <svg @click="viewFuncs('lists')" class="GetStarted" width="100" height="40" viewBox="0 0 100 40">
+         <defs>
+            <linearGradient id="theme" x1="0%" y1="0%" x2="100%" y2="50%">
+                <stop class="c1" offset="0%"></stop>
+                <stop class="c2" offset="50%"></stop>
+                <stop class="c3" offset="100%"></stop>
+            </linearGradient>
+            <mask id="mymask">
+                    <g>
+                        <path d="M20.2,16.4a3.4,3.4,0,0,1,2.4,1l-1,1.1a1.9,1.9,0,0,0-1.4-.6c-1.2,0-2.1.9-2.1,2.5s.7,2.5,2.2,2.5a1.4,1.4,0,0,0,.8-.2V21.4H19.9V19.9h2.9v3.6a4.1,4.1,0,0,1-2.6.9,3.7,3.7,0,0,1-3.8-4A3.8,3.8,0,0,1,20.2,16.4Z" transform="translate(-0.8 -2.6)" fill="#fff"/>
+                        <path d="M24.4,16.5h4.9V18H26.2v1.6h2.7V21H26.2v1.8h3.3v1.5h-5Z" transform="translate(-0.8 -2.6)" fill="#fff"/>
+                        <path d="M32.5,18H30.3V16.5h6.1V18H34.3v6.3H32.5Z" transform="translate(-0.8 -2.6)" fill="#fff"/>
+                        <path d="M40.6,22.1a3.1,3.1,0,0,0,1.9.8c.7,0,1.1-.3,1.1-.8s-.4-.6-1.1-.9l-1-.4a2.3,2.3,0,0,1-1.6-2.1,2.5,2.5,0,0,1,2.8-2.3,3.6,3.6,0,0,1,2.5,1l-.9,1.1a2.6,2.6,0,0,0-1.6-.6c-.6,0-1,.3-1,.7s.5.6,1.2.9l1,.4a2.2,2.2,0,0,1,1.6,2.1c0,1.3-1.1,2.4-2.9,2.4a4.3,4.3,0,0,1-2.9-1.1Z" transform="translate(-0.8 -2.6)" fill="#fff"/>
+                        <path d="M48.1,18H45.9V16.5H52V18H49.9v6.3H48.1Z" transform="translate(-0.8 -2.6)" fill="#fff"/>
+                        <path d="M56.4,22.5H54l-.5,1.9H51.7l2.5-7.8h2.1l2.5,7.8H56.9Zm-.4-1.4-.2-.7-.6-2.5h0c-.2.8-.4,1.7-.6,2.5l-.2.7Z" transform="translate(-0.8 -2.6)" fill="#fff"/>
+                        <path d="M64.1,21.2a2.3,2.3,0,0,0,1.4-2.3c0-1.9-1.4-2.4-3-2.4H59.6v7.8h1.8V21.5h1l1.5,2.8h2Zm-1.8-1.1h-.9V17.9h.9c.9,0,1.4.3,1.4,1S63.2,20.1,62.3,20.1Z" transform="translate(-0.8 -2.6)" fill="#fff"/>
+                        <path d="M68.3,18H66.1V16.5h6.1V18H70v6.3H68.3Z" transform="translate(-0.8 -2.6)" fill="#fff"/>
+                        <path d="M73.4,16.5h4.9V18H75.2v1.6h2.7V21H75.2v1.8h3.3v1.5h-5Z" transform="translate(-0.8 -2.6)" fill="#fff"/>
+                        <path d="M82.2,16.5H80v7.8h2.3c2.3,0,3.8-1.3,3.8-4S84.6,16.5,82.2,16.5Zm-.1,6.4h-.3v-5h.3c1.3,0,2.2.6,2.2,2.5S83.4,22.9,82.1,22.9Z" transform="translate(-0.8 -2.6)" fill="#fff"/>
+                        <path d="M85.8,2.6H14.3A13.5,13.5,0,0,0,.8,16.1v7.8A13.5,13.5,0,0,0,14.3,37.4H85.8A13.5,13.5,0,0,0,99.3,23.9V16.1A13.5,13.5,0,0,0,85.8,2.6ZM96.3,23.9A10.5,10.5,0,0,1,85.8,34.4H14.3A10.5,10.5,0,0,1,3.8,23.9V16.1A10.5,10.5,0,0,1,14.3,5.6H85.8A10.5,10.5,0,0,1,96.3,16.1Z" transform="translate(-0.8 -2.6)" fill="#fff"/>
+                      </g>
+             </mask>
+         </defs>
+          <rect 
+          class="bg" 
+          width="100" 
+          height="40" 
+          mask="url(#mymask)"
+          fill="url(#theme)"
+          />
+        </svg>
+
+
+            </div>
+        </div>
+
+    </div>
+    <script src="js/main.js"></script>
+</body>
+
+
+</html>

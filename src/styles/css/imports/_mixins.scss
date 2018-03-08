@@ -1,0 +1,12 @@
+// centered image
+@mixin centerBg($t){@extend .centerBg;background-image: $t;}
+// responsive mixins
+@mixin r($q){@media screen and (max-width:$q){@content;}}
+// height and width
+@mixin hw($p,$v){height:$p;width:$v;}
+// square
+@mixin sq($l){height:$l;width:$l;}
+// font mixin
+@mixin font($f,$w,$s){font-family:'#{$f}', sans-serif;font-weight:$w;font-size:$s;}
+// barheight
+@mixin bar($j){ height:$j; line-height:$j; * {line-height:$j; height:$j;} }
